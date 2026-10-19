@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="ru">
 <head>
@@ -5,50 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10131b">
   <title>На связи — голосовая комната</title>
-  <style>
-    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: radial-gradient(ellipse at top, #202a3e 0, #10131b 58%); color: #f4f6fb; }
-    main { width: min(100%, 520px); border: 1px solid #30394c; background: rgba(18, 23, 34, .94); border-radius: 24px; padding: clamp(22px, 5vw, 36px); box-shadow: 0 24px 80px #0005; }
-    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
-    .logo { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: #a7f36b; color: #15210d; font-size: 23px; font-weight: 900; }
-    h1 { font-size: 24px; margin: 0; letter-spacing: -.5px; }
-    .subtitle { color: #9da8bc; margin: 5px 0 0; font-size: 14px; }
-    .status { display: flex; align-items: center; gap: 10px; border: 1px solid #30394c; background: #171e2b; border-radius: 14px; padding: 13px 15px; margin-bottom: 22px; color: #c7d0df; font-size: 14px; }
-    .dot { width: 9px; height: 9px; border-radius: 50%; background: #7c8799; flex: 0 0 auto; }
-    .dot.ok { background: #a7f36b; box-shadow: 0 0 12px #a7f36b66; }
-    label { display: block; font-size: 13px; color: #aab5c8; margin: 16px 0 8px; }
-    input { width: 100%; border: 1px solid #3b465c; background: #0e131d; color: #fff; border-radius: 12px; padding: 14px; font: inherit; outline: none; }
-    input:focus { border-color: #a7f36b; box-shadow: 0 0 0 3px #a7f36b1c; }
-    button { border: 0; border-radius: 12px; padding: 14px 16px; width: 100%; font: inherit; font-weight: 750; cursor: pointer; transition: transform .12s, opacity .12s, background .12s; }
-    button:active { transform: scale(.99); }
-    button:disabled { opacity: .45; cursor: not-allowed; }
-    .primary { background: #a7f36b; color: #17210e; margin-top: 12px; }
-    .secondary { background: #252e40; color: #edf2fa; border: 1px solid #3a465d; margin-top: 10px; }
-    .divider { display: flex; align-items: center; gap: 12px; color: #748198; font-size: 12px; margin: 22px 0 6px; }
-    .divider:before, .divider:after { content: ""; height: 1px; background: #30394c; flex: 1; }
-    .room { display: none; margin-top: 20px; padding: 16px; border: 1px solid #3a465d; background: #171e2b; border-radius: 14px; }
-    .room.visible { display: block; }
-    .room-id { font-size: 25px; font-weight: 800; letter-spacing: 2px; overflow-wrap: anywhere; margin: 8px 0 12px; }
-    .hint { color: #8e9bb1; font-size: 12px; line-height: 1.5; margin: 14px 0 0; }
-    .error { color: #ff9b9b; font-size: 13px; line-height: 1.5; margin-top: 12px; white-space: pre-wrap; }
-    .connected { display: none; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 14px; border-radius: 14px; background: #1b2b1a; border: 1px solid #3b6033; }
-    .connected.visible { display: flex; }
-    .connected strong { display: block; }
-    .connected span { display: block; font-size: 12px; color: #b1c9a8; margin-top: 4px; }
-    .hangup { width: auto; background: #522a35; color: #ffdce2; padding: 11px 14px; }
-    footer { color: #65728a; text-align: center; font-size: 11px; line-height: 1.5; margin-top: 22px; }
-    @media (max-width: 420px) { body { padding: 12px; } main { border-radius: 18px; } }
-  </style>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js" defer></script>
+  <script src="./app.js" defer></script>
 </head>
 <body>
   <main>
     <div class="brand">
       <div class="logo">↗</div>
-      <div><h1>На связи</h1><p class="subtitle">Приватная голосовая для двоих</p></div>
+      <div>
+        <h1>На связи</h1>
+        <p class="subtitle">Приватная голосовая для двоих</p>
+      </div>
     </div>
 
-    <div class="status" aria-live="polite"><span class="dot" id="statusDot"></span><span id="statusText">Не подключено · создай комнату или введи код друга</span></div>
+    <div class="status" aria-live="polite">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Не подключено · создай комнату или введи код друга</span>
+    </div>
 
     <section id="createSection">
       <button class="primary" id="createBtn">Создать комнату</button>
@@ -56,174 +31,34 @@
     </section>
 
     <div class="divider">ИЛИ ПОДКЛЮЧИТЬСЯ К ДРУГУ</div>
+
     <label for="peerId">Код комнаты друга</label>
-    <input id="peerId" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Вставь код сюда">
+    <input id="peerId" autocomplete="off" autocapitalize="off"
+      spellcheck="false" placeholder="Вставь код сюда">
     <button class="secondary" id="joinBtn">Подключиться</button>
 
     <section class="room" id="roomPanel">
-      <div class="hint" style="margin-top:0">Твой код комнаты</div>
+      <div class="hint room-hint">Твой код комнаты</div>
       <div class="room-id" id="roomId"></div>
       <button class="secondary" id="copyBtn">Скопировать код</button>
       <p class="hint">Ждём друга. Не закрывай вкладку, пока разговариваете.</p>
     </section>
 
     <section class="connected" id="connectedPanel">
-      <div><strong>Голосовое соединение активно</strong><span>Микрофон включён</span></div>
+      <div>
+        <strong>Голосовое соединение активно</strong>
+        <span>Микрофон включён</span>
+      </div>
       <button class="hangup" id="hangupBtn">Завершить</button>
     </section>
 
     <div id="error" class="error" role="alert"></div>
     <audio id="remoteAudio" autoplay playsinline></audio>
-    <footer>Прототип · голос идёт напрямую, если сеть позволяет. В некоторых сетях понадобится TURN-релей.</footer>
+
+    <footer>
+      Прототип · голос идёт напрямую, если сеть позволяет.
+      В некоторых сетях понадобится TURN-релей.
+    </footer>
   </main>
-
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script>
-    const createBtn = document.getElementById('createBtn');
-    const joinBtn = document.getElementById('joinBtn');
-    const peerIdInput = document.getElementById('peerId');
-    const statusText = document.getElementById('statusText');
-    const statusDot = document.getElementById('statusDot');
-    const roomPanel = document.getElementById('roomPanel');
-    const roomId = document.getElementById('roomId');
-    const connectedPanel = document.getElementById('connectedPanel');
-    const remoteAudio = document.getElementById('remoteAudio');
-    const errorBox = document.getElementById('error');
-
-    let peer = null;
-    let localStream = null;
-    let activeCall = null;
-    let isConnected = false;
-
-    function setStatus(text, online = false) {
-      statusText.textContent = text;
-      statusDot.classList.toggle('ok', online);
-    }
-    function showError(text) { errorBox.textContent = text || ''; }
-    function setBusy(busy) {
-      createBtn.disabled = busy;
-      joinBtn.disabled = busy;
-    }
-    async function getMicrophone() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error('Браузер не разрешил доступ к микрофону. Открой сайт по HTTPS и используй актуальный Chrome или Edge.');
-      }
-      return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false });
-    }
-    function attachCall(call) {
-      if (activeCall) {
-        call.close();
-        return;
-      }
-      activeCall = call;
-      call.on('stream', async (stream) => {
-        remoteAudio.srcObject = stream;
-        try { await remoteAudio.play(); } catch (_) {
-          showError('Нажми на страницу ещё раз, если браузер заблокировал воспроизведение звука.');
-        }
-        isConnected = true;
-        connectedPanel.classList.add('visible');
-        roomPanel.classList.remove('visible');
-        setStatus('Вы на связи — голос передаётся', true);
-        showError('');
-      });
-      call.on('close', () => resetCall('Собеседник отключился. Можно подключиться заново.'));
-      call.on('error', (err) => resetCall('Ошибка голосового соединения: ' + (err?.message || 'неизвестная ошибка')));
-    }
-    function resetCall(message) {
-      if (activeCall) { try { activeCall.close(); } catch (_) {} }
-      activeCall = null;
-      isConnected = false;
-      remoteAudio.srcObject = null;
-      connectedPanel.classList.remove('visible');
-      if (peer && roomId.textContent) roomPanel.classList.add('visible');
-      setStatus(message || 'Соединение завершено', false);
-    }
-    function bindPeerEvents(p) {
-      p.on('error', (err) => {
-        let message = err?.message || String(err);
-        if (err?.type === 'peer-unavailable') message = 'Не удалось найти такую комнату. Проверь код и попроси друга открыть страницу заново.';
-        if (err?.type === 'network' || err?.type === 'server-error') message = 'Не удалось связаться с сервером подключения. Проверьте доступ к интернету и попробуйте ещё раз.';
-        showError(message);
-        setStatus('Не удалось установить соединение', false);
-        setBusy(false);
-      });
-      p.on('disconnected', () => setStatus('Потеряна связь с сервером сигнализации. Переподключаемся…', false));
-      p.on('close', () => setStatus('Соединение закрыто', false));
-      p.on('call', (call) => {
-        if (!localStream) { call.close(); return; }
-        call.answer(localStream);
-        attachCall(call);
-      });
-    }
-    async function createRoom() {
-      showError(''); setBusy(true);
-      try {
-        localStream = await getMicrophone();
-        peer = new Peer();
-        bindPeerEvents(peer);
-        peer.on('open', (id) => {
-          roomId.textContent = id;
-          roomPanel.classList.add('visible');
-          setStatus('Комната создана — отправь код другу', true);
-          setBusy(false);
-        });
-      } catch (err) {
-        showError(err?.message || String(err));
-        setStatus('Не удалось создать комнату', false);
-        setBusy(false);
-      }
-    }
-    async function joinRoom() {
-      const targetId = peerIdInput.value.trim();
-      if (!targetId) { showError('Сначала вставь код комнаты друга.'); return; }
-      showError(''); setBusy(true);
-      try {
-        localStream = await getMicrophone();
-        peer = new Peer();
-        bindPeerEvents(peer);
-        peer.on('open', () => {
-          setStatus('Подключаемся к комнате…', false);
-          const call = peer.call(targetId, localStream);
-          if (!call) throw new Error('Не удалось начать звонок. Проверь код комнаты.');
-          attachCall(call);
-          setBusy(false);
-        });
-      } catch (err) {
-        showError(err?.message || String(err));
-        setStatus('Не удалось подключиться', false);
-        setBusy(false);
-      }
-    }
-    async function hangup() {
-      if (activeCall) { try { activeCall.close(); } catch (_) {} }
-      if (peer) { try { peer.destroy(); } catch (_) {} }
-      if (localStream) localStream.getTracks().forEach(track => track.stop());
-      peer = null; localStream = null; activeCall = null; isConnected = false;
-      remoteAudio.srcObject = null;
-      roomPanel.classList.remove('visible');
-      connectedPanel.classList.remove('visible');
-      roomId.textContent = '';
-      setBusy(false);
-      setStatus('Звонок завершён', false);
-      showError('');
-    }
-    createBtn.addEventListener('click', createRoom);
-    joinBtn.addEventListener('click', joinRoom);
-    document.getElementById('hangupBtn').addEventListener('click', hangup);
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(roomId.textContent);
-        document.getElementById('copyBtn').textContent = 'Код скопирован ✓';
-        setTimeout(() => document.getElementById('copyBtn').textContent = 'Скопировать код', 1600);
-      } catch (_) {
-        showError('Не удалось скопировать автоматически. Выдели код и скопируй вручную.');
-      }
-    });
-    window.addEventListener('beforeunload', () => {
-      if (localStream) localStream.getTracks().forEach(track => track.stop());
-      if (peer) peer.destroy();
-    });
-  </script>
 </body>
 </html>
